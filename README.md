@@ -7,7 +7,7 @@ A predictive machine-learning lambda that provides the probability of one player
 - [x] Initialize project + set up lambda
 - [x] Establish extracted features for linear regression
 - [x] Build dataframe for linear regression
-- [ ] Train dataframe on input data
+- [x] Implement training linear regression model on input data
 - [ ] Establish other desired features + what other models to utilize
 - [ ] Establish benchmark for what to use as the comparative baselines (win/loss? ranking?)
 - [ ] Deploy + link it up to the dashboard
