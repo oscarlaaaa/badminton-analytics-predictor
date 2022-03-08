@@ -1,0 +1,14 @@
+ranking?? (might be difficult to scrape)
+
+---only if available in both players---
+height diff
+age diff
+hand diff
+
+total match win rate
+total point win rate
+
+## recent = last 5 matches?
+recent match win rate
+recent point win rate
+
