@@ -4,14 +4,15 @@ import nest_asyncio
 import requests
 import random, time
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import text
+# from sqlalchemy.ext.declarative import declarative_base
+# from sqlalchemy.orm import sessionmaker
 from decouple import config
 from bs4 import BeautifulSoup
 
-# SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{config('MYSQL_USER')}:{config('MYSQL_PASS')}@{config('MYSQL_HOST')}/{config('MYSQL_DB')}"
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{config('MYSQL_USER')}:{config('MYSQL_PASS')}@{config('MYSQL_HOST')}/{config('MYSQL_DB')}"
 
-# engine = create_engine(SQLALCHEMY_DATABASE_URL)
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 # SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Base = declarative_base()
@@ -90,24 +91,31 @@ async def test(test_data):
         return await asyncio.gather(*[grab_player_info(player=player, session=session) for player in test_data], return_exceptions=True)
 
 if __name__ == "__main__":
-    req = requests.get("http://api.badminton-api.com/player/search?limit=10000")
+    req = requests.get("https://api.badminton-api.com/player/search?limit=15000")
     test_data = req.json()['data']
 
     batch_size = 50
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+    def UPDATE_PLAYER_ROW_QUERY(pid, imgLink):
+        return text(f"UPDATE `player` SET imgLink = '{imgLink}' WHERE `id` = '{pid}';")
 
     for i in range(0, len(test_data), batch_size):
         print(f"running for batch {i}-{i+batch_size-1}")
         xd = None
-        if i + batch_size > len(test_data):
-            xd = asyncio.run(test(test_data[i:]))
-        else:
+        
+        if i + batch_size < len(test_data):
             xd = asyncio.run(test(test_data[i:i+batch_size]))
+        else:
+            xd = asyncio.run(test(test_data[i:]))
 
         if xd:
-            for x in xd:
-                print(str(x).encode('utf-8'))
+            with engine.connect() as conn:
+                for x in xd:
+                    statement = UPDATE_PLAYER_ROW_QUERY(x['id'], x['img link'])
+                    conn.execute(statement)
         else:
             print(f"no results for range {i}-{i+batch_size}")
-
-        time.sleep(15 + random.randint(0, 10))
+        print(f"done for batch {i}-{i+batch_size-1}!\n\n")
+        time.sleep(5 + random.randint(0, 20))
     
