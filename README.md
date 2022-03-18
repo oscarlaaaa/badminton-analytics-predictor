@@ -1,6 +1,12 @@
 # Badminton Analytics Predictor
-
 A predictive machine-learning lambda that provides the probability of one player's victory over another. Provides functionality for the [Badminton Analytics Dashboard](https://github.com/oscarlaaaa/badminton-analytics/)'s head-to-head prediction feature (WIP).
+
+
+### Features:
+- Predicted % chance of victory between two players
+- Fully implemented Linear Regression and Logistic Regression models with 13 extracted features
+- Optimized database table to avoid costly joins when building dataframe
+- Calculated Mean Absolute, Mean Squared, Root Mean Squared error values, and Prediction Interval Bounds.
 
 
 ### Roadmap:
