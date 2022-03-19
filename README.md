@@ -4,7 +4,7 @@ A predictive machine-learning lambda that provides the probability of one player
 
 ### Features:
 - Predicted % chance of victory between two players
-- Fully implemented Linear Regression and Logistic Regression models with 13 extracted features
+- Fully implemented Linear Regression and Logistic Regression models with 6 extracted features
 - Optimized database table to avoid costly joins when building dataframe
 - Calculated Mean Absolute, Mean Squared, Root Mean Squared error values, and Prediction Interval Bounds.
 
@@ -14,6 +14,6 @@ A predictive machine-learning lambda that provides the probability of one player
 - [x] Establish extracted features for linear regression
 - [x] Build dataframe for linear regression
 - [x] Implement training linear regression model on input data
-- [ ] Establish other desired features + what other models to utilize
-- [ ] Establish benchmark for what to use as the comparative baselines (win/loss? ranking?)
+- [x] Establish other desired features + what other models to utilize
+- [x] Establish benchmark for what to use as the comparative baselines (win/loss? ranking?)
 - [ ] Deploy + link it up to the dashboard

@@ -8,10 +8,6 @@ from sklearn.model_selection import train_test_split
 from helpers import predictive_interval as pred_int
 
 TESTING_SIZE = 0.5
-X_FIELDS = ['age', 'totalMatchesWon', 'totalMatchesLost', 'totalPointsWon', 'totalPointsLost', \
-            'recentMatchesWon', 'recentMatchesLost', 'recentPointsWon', 'recentPointsLost', \
-            'h2hMatchesWon', 'h2hMatchesLost', 'h2hPointsWon', 'h2hPointsLost']
-
 X_FIELDS_RATIOS = ['totalMatchWinRatio', 'totalPointWinRatio', 'recentMatchWinRatio', \
                     'recentPointWinRatio', 'h2hMatchWinRatio', 'h2hPointWinRatio']
 Y_FIELD = 'wonMatch'
@@ -32,6 +28,7 @@ def train_lin_reg_model(df):
     y_pred = regressor.predict(X_test)
     df = pd.DataFrame({'Win?': y_test, '% Chance Predicted': y_pred})
     prediction_interval = pred_int.get_prediction_interval(y_pred[0], y_test, y_pred)
+
     print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
@@ -57,12 +54,12 @@ def train_log_reg_model(df):
     ## Predict results using testing data
     y_pred = regressor.predict(scaler.transform(X_test))
     df = pd.DataFrame({'Win?': y_test, 'Predicted Outcome': y_pred})
-    prediction_interval = pred_int.get_prediction_interval(y_pred[0], y_test, y_pred)
 
+    ## evaluate accuracy of model
     kfold = model_selection.KFold(n_splits=10, random_state=7, shuffle=True)
     scoring = 'accuracy'
     results = model_selection.cross_val_score(regressor, X, y, cv=kfold, scoring=scoring)
-    print("Logistic Regression Accuracy: %.3f (%.3f)" % (results.mean(), results.std()))
+    print("Logistic Regression Accuracy: %.3f (%.3f)\n\n" % (results.mean(), results.std()))
 
     return df
 
@@ -83,12 +80,14 @@ def train_sup_vec_class_model(df):
     y_pred = regressor.predict(X_test)
     df = pd.DataFrame({'Win?': y_test, 'Predicted': y_pred})
 
+    # evaluate accuracy of model
     kfold = model_selection.KFold(n_splits=10, random_state=7, shuffle=True)
     scoring = 'accuracy'
     results = model_selection.cross_val_score(regressor, X, y, cv=kfold, scoring=scoring)
-    print("Support Vector Classification Accuracy: %.3f (%.3f)" % (results.mean(), results.std()))
 
     prediction_interval = pred_int.get_prediction_interval(y_pred[0], y_test, y_pred)
+
+    print("Support Vector Classification Accuracy: %.3f (%.3f)" % (results.mean(), results.std()))
     print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
     print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
     print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
