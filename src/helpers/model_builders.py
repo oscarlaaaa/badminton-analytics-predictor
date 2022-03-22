@@ -1,15 +1,8 @@
-import requests
-from datetime import date
 import pandas as pd
 import numpy as np
 
 def build_dataframe(player_id, player_data, opponent_id):
     ROLLING_WINDOW = 5
-
-    # request relevant player data
-    player = requests.get(f"https://api.badminton-api.com/player?player_id={player_id}").json()
-    player_info = player['data']
-    birthDate = player_info['birthDate'] if 'birthDate' in player_info else None
 
     # initialize dataframe
     df = pd.DataFrame(player_data, index=[i for i in range(len(player_data))])
@@ -26,16 +19,6 @@ def build_dataframe(player_id, player_data, opponent_id):
     df['totalPointsWon'] = np.where(df['winnerId'] == player_id, df['totalPointsWon'].sub(df['winnerPoints']), df['totalPointsWon'].sub(df['loserPoints']))
     df['totalPointsLost'] = np.where(df['winnerId'] == player_id, df['loserPoints'], df['winnerPoints']).cumsum()
     df['totalPointsLost'] = np.where(df['winnerId'] == player_id, df['totalPointsLost'].sub(df['loserPoints']), df['totalPointsWon'].sub(df['winnerPoints']))
-
-    # only calculate age if available
-    if birthDate:
-        splitdate1 = birthDate.split('-')
-        birthDate = date(year=int(splitdate1[0]), month=int(splitdate1[1]), day=int(splitdate1[2]))
-        birthDate = pd.Timestamp(birthDate)
-        df['startDate'] = pd.to_datetime(df['startDate'], format='%Y-%m-%d') #if conversion required
-        df['age'] = (df['startDate'] - birthDate).astype('<m8[Y]')    # 3
-    else:
-        df['age'] = 0
     
     ## The outcome of our match - our y factor
     df['wonMatch'] = np.where(df['winnerId'] == player_id, True, False)

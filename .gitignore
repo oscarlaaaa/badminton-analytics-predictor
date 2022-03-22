@@ -1,3 +1,5 @@
 .env
 my-deployment-package.zip
 package
+deploy
+deploy.zip
