@@ -1,9 +1,9 @@
 # import requests
 # from tabulate import tabulate
 
-from model_trainers import train_log_reg_model, train_sup_vec_class
-from model_builders import build_dataframe
-from util_functions import format_response
+from .helpers.model_trainers import train_log_reg_model, train_sup_vec_class_model
+from .helpers.model_builders import build_dataframe
+from .helpers.util_functions import format_response
 
 import logging
 

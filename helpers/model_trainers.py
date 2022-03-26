@@ -12,35 +12,6 @@ X_FIELDS_RATIOS = ['totalMatchWinRatio', 'totalPointWinRatio', 'recentMatchWinRa
                     'recentPointWinRatio', 'h2hMatchWinRatio', 'h2hPointWinRatio']
 Y_FIELD = 'wonMatch'
 
-# def train_lin_reg_model(df):
-#     # independent variables
-#     X = df[X_FIELDS_RATIOS]
-
-#     # dependent variables
-#     y = df[Y_FIELD]  
-
-#     ## Split data into training data and testing data
-#     X_train, X_test, y_train, y_test = train_test_split(X[:-1], y[:-1], test_size=TESTING_SIZE, random_state=0)
-#     regressor = LinearRegression()
-#     regressor.fit(X_train, y_train)
-
-#     ## Predict results using testing data
-#     y_pred = regressor.predict(X_test)
-#     df = pd.DataFrame({'Win?': y_test, '% Chance Predicted': y_pred})
-#     prediction_interval = pred_int.get_prediction_interval(y_pred[0], y_test, y_pred)
-
-#     prediction = regressor.predict(X.loc[0,:].to_numpy().reshape(1,-1))
-    
-#     # print('LINEAR REGRESSION')
-#     # print('Mean Absolute Error:', metrics.mean_absolute_error(y_test, y_pred))
-#     # print('Mean Squared Error:', metrics.mean_squared_error(y_test, y_pred))
-#     # print('Root Mean Squared Error:', np.sqrt(metrics.mean_squared_error(y_test, y_pred)))
-#     # print(f'Prediction Interval: \nLower: {prediction_interval[0]}\tUpper: {prediction_interval[2]}\n\n' )
-    
-#     output = {"pred": prediction[0]}
-
-#     return output
-
 def train_log_reg_model(df):
     # dependent variables
     X = df[X_FIELDS_RATIOS]
