@@ -54,7 +54,6 @@ def lambda_handler(event, context):
         logger.info(f"Error: {e}")
         response = {
             "request": f"POST prediction of {event['player']} vs {event['opponent']} using {event['type']}.",
-            "status": "error",
             "statusCode": 404,
             "headers": {
                 "Content-Type": "application/json"
