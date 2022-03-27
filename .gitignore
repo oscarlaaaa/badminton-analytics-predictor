@@ -4,3 +4,4 @@ package
 deploy
 deploy.zip
 *.pyc
+push_image.sh

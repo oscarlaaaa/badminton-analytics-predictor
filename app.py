@@ -1,27 +1,30 @@
-# import requests
-# from tabulate import tabulate
-
-from .helpers.model_trainers import train_log_reg_model, train_sup_vec_class_model
-from .helpers.model_builders import build_dataframe
-from .helpers.util_functions import format_response
+from helpers import model_builders
+from helpers import model_trainers
+from helpers import util_functions
 
 import logging
+import json
+# import requests
+# from tabulate import tabulate
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 def predict_winner(player_id, opponent_id, player_data, model_type):
-    df = build_dataframe(player_id, player_data, opponent_id)
+    df = model_builders.build_dataframe(player_id, player_data, opponent_id)
+    logger.info("Model is built.")
     
     if model_type == "logistic_regression":
-        log_reg = train_log_reg_model(df)
+        logger.info("Logistic regression model training.")
+        log_reg = model_trainers.train_log_reg_model(df)
         logger.info("Logistic Regression")
         logger.info(f"Accuracy: {log_reg['acc']} ({log_reg['acc']})")
         logger.info(f"Prediction: {log_reg['pred']}")
         return log_reg
 
     elif model_type == "support_vector_classification":
-        sup_vec_class = train_sup_vec_class_model(df)
+        logger.info("Support vector classification model training.")
+        sup_vec_class = model_trainers.train_sup_vec_class_model(df)
         logger.info("Support Vector Classification")
         logger.info(f"Accuracy: {sup_vec_class['acc']} ({sup_vec_class['acc']})")
         logger.info(f"Prediction: {sup_vec_class['pred']}")
@@ -43,23 +46,26 @@ def lambda_handler(event, context):
     :return: The result of the specified action.
     """
     logger.info('Event: %s', event)
-
+    response = None
     try:
         result = predict_winner(event['player'], event['opponent'], event['data'], event['type'])
-    except:
-        result = {
+        response = util_functions.format_response(result, event['player'], event['opponent'], event['type'])
+    except Exception as e:
+        logger.info(f"Error: {e}")
+        response = {
             "request": f"POST prediction of {event['player']} vs {event['opponent']} using {event['type']}.",
             "status": "error",
-            "status_code": 404,
-            "data": None
+            "statusCode": 404,
+            "headers": {
+                "Content-Type": "application/json"
+            },
+            "body": ""
             }
 
-    logger.info(f'Result: {result["data"]}')
+    logger.info(f'Result: {response}')
+    return json.dumps(response, default=str)
 
-    response = format_response(result, event['player'], event['opponent'], event['type'])
-    return response
-
-## for testing
+# # for testing
 # if __name__ == '__main__':
 #     ### DONNIANS OLIVEIRA - ~17 matches ###
 #     donnians_olivera = "5F74B009-175F-4564-8C8E-7C57FDCF8D10"
@@ -70,15 +76,19 @@ def lambda_handler(event, context):
 
 #     response = requests.get(f"https://api.badminton-api.com/match/player?player_id={lee_chong_wei}&sort_desc=False")
 #     response = response.json()
-#     df = builder.build_dataframe(lee_chong_wei, response['data'], lee_hyun_il)
+#     df = model_builders.build_dataframe(lee_hyun_il, response['data'], lee_chong_wei)
 #     print(tabulate(df, headers = 'keys', tablefmt = 'psql'))
 
-#     log_reg = trainer.train_log_reg_model(df)
+#     log_reg = model_trainers.train_log_reg_model(df)
 #     print("Logistic Regression")
 #     print(f"Accuracy: {log_reg['acc']} ({log_reg['acc']})")
 #     print(f"Prediction: {log_reg['pred']}")
+#     print(f"Probability: {log_reg['prob']}")
 
-#     sup_vec_class = trainer.train_sup_vec_class_model(df)
+#     print()
+
+#     sup_vec_class = model_trainers.train_sup_vec_class_model(df)
 #     print("Support Vector Classification")
 #     print(f"Accuracy: {sup_vec_class['acc']} ({sup_vec_class['acc']})")
 #     print(f"Prediction: {sup_vec_class['pred']}")
+#     print(f"Probability: {sup_vec_class['prob']}")
