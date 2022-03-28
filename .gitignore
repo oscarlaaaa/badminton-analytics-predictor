@@ -1,7 +1,4 @@
 .env
 my-deployment-package.zip
 package
-deploy
-deploy.zip
 *.pyc
-push_image.sh
