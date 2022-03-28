@@ -12,26 +12,25 @@ logger.setLevel(logging.INFO)
 
 def predict_winner(player_id, opponent_id, player_data, model_type):
     df = model_builders.build_dataframe(player_id, player_data, opponent_id)
-    logger.info("Model is built.")
+    logger.info("Dataframe is built.")
+    model = None
     
     if model_type == "logistic_regression":
         logger.info("Logistic regression model training.")
-        log_reg = model_trainers.train_log_reg_model(df)
-        logger.info("Logistic Regression")
-        logger.info(f"Accuracy: {log_reg['acc']} ({log_reg['acc']})")
-        logger.info(f"Prediction: {log_reg['pred']}")
-        return log_reg
+        model = model_trainers.train_log_reg_model(df)
 
     elif model_type == "support_vector_classification":
         logger.info("Support vector classification model training.")
-        sup_vec_class = model_trainers.train_sup_vec_class_model(df)
-        logger.info("Support Vector Classification")
-        logger.info(f"Accuracy: {sup_vec_class['acc']} ({sup_vec_class['acc']})")
-        logger.info(f"Prediction: {sup_vec_class['pred']}")
-        return sup_vec_class
-        
-    else:
+        model = model_trainers.train_sup_vec_class_model(df)
+    
+    logger.info(f"Accuracy: {model['acc']} ({model['acc']})")
+    logger.info(f"Prediction: {model['pred']}")
+    logger.info(f"Probability: {model['prob']}")
+
+    if not model:
         return "xd"
+    
+    return model
 
 def lambda_handler(event, context):
     """
@@ -47,18 +46,23 @@ def lambda_handler(event, context):
     """
     logger.info('Event: %s', event)
     response = None
+
     try:
-        result = predict_winner(event['player'], event['opponent'], event['data'], event['type'])
-        response = util_functions.format_response(result, event['player'], event['opponent'], event['type'])
+        logger.info(f"body: {event['body']}")
+    except:
+        logger.info("no body lol")
+
+    try:
+        result = predict_winner(event["body"]["player"], event["body"]["opponent"], event["body"]["data"], event["body"]["type"])
+        response = util_functions.format_response(result, event["body"]["player"], event["body"]["opponent"], event["body"]["type"])
     except Exception as e:
         logger.info(f"Error: {e}")
         response = {
-            "request": f"POST prediction of {event['player']} vs {event['opponent']} using {event['type']}.",
             "statusCode": 404,
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": ""
+            "body": str(e)
             }
 
     logger.info(f'Result: {response}')
