@@ -1,15 +1,15 @@
 # Badminton Analytics Predictor
 A predictive machine-learning lambda that provides the probability of one player's victory over another. Provides functionality for the [Badminton Analytics Dashboard](https://github.com/oscarlaaaa/badminton-analytics/)'s head-to-head prediction feature (WIP).
 
-## Motivation:
-I've always wanted a way to use the data I've shamelessly scraped from tournamentsoftware to try and draw some kind of useful conclusion, so I decided that to implement some kind of match outcome predictor! While the returned data is likely inaccurate, incomplete, and likely a stain on the machine learning community, it was a bunch of fun making it (minus the AWS issues...)!
-
-## Features:
+## Current Features:
 - Predicted % chance of victory between two players
 - Fully implemented Logistic Regression and Support Vector Classification (linear) models with 6 extracted features
 - Optimized database table to avoid costly joins when building dataframe
 - Dockerized Lambda platform to circumvent 250mb size limit
 - Accuracy, deviation, prediction, and probability values after each Lambda call
+
+## Motivation:
+I've always wanted a way to use the data I've shamelessly scraped from tournamentsoftware to try and draw some kind of useful conclusion, so I decided that to implement some kind of match outcome predictor! While the returned data is likely inaccurate, incomplete, and likely a stain on the machine learning community, it was a bunch of fun making it (minus the AWS issues...)!
 
 ## Technologies:
 - Python 3.9
