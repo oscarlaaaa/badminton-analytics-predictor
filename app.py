@@ -45,6 +45,10 @@ def lambda_handler(event, context):
     :return: The result of the specified action.
     """
     logger.info('Event: %s', event)
+    body = event['body']
+    logger.info(f"Body type: {type(body)}")
+    body = json.loads(body)
+    logger.info(f"Body type after: {type(body)}")
     response = None
 
     try:
@@ -53,10 +57,11 @@ def lambda_handler(event, context):
         logger.info("no body lol")
 
     try:
-        result = predict_winner(event["body"]["player"], event["body"]["opponent"], event["body"]["data"], event["body"]["type"])
-        response = util_functions.format_response(result, event["body"]["player"], event["body"]["opponent"], event["body"]["type"])
+        result = predict_winner(body["player"], body["opponent"], body["data"], body["type"])
+        response = util_functions.format_response(result, body["player"], body["opponent"], body["type"])
     except Exception as e:
         logger.info(f"Error: {e}")
+        logger.info(f"Traceback: {e.with_traceback}")
         response = {
             "statusCode": 404,
             "headers": {

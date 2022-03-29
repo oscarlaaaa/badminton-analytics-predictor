@@ -2,6 +2,9 @@
 echo "Logging into AWS..."
 aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin ${AWS_ACCOUNT_ID}.dkr.ecr.us-east-2.amazonaws.com
 
+echo "Creating repository..."
+aws ecr create-repository --repository-name ${REPOSITORY_NAME} --image-scanning-configuration scanOnPush=true --image-tag-mutability MUTABLE
+
 echo "Building image..."
 docker build -t ${IMAGE_NAME} . --no-cache
 
