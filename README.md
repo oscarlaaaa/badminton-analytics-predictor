@@ -8,7 +8,7 @@ I've always wanted a way to use the data I've shamelessly scraped from tournamen
 - Predicted % chance of victory between two players
 - Fully implemented Logistic Regression and Support Vector Classification (linear) models with 6 extracted features
 - Optimized database table to avoid costly joins when building dataframe
-- Dockerized lambda platform to circumvent 250mb lambda size limit
+- Dockerized Lambda platform to circumvent 250mb size limit
 - Accuracy, deviation, prediction, and probability values after each Lambda call
 
 ## Technologies:
