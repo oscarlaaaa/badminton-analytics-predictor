@@ -32,6 +32,19 @@ To deploy the project onto AWS Lambda:
 5. Make the script runnable by running ```chmod +x push_image.sh```
 6. Run the script by running ```./push_image.sh```
 
+To query the Lambda function:
+1. Query player matches from the [Badminton Singles API](https://api.badminton-api.com) in descending order
+2. Send the data to the lambda in the form of the following request:
+```json
+{
+  "player": <player-id>,
+  "opponent": <opponent-id>,
+  "type": <logistic_regression> OR <support_vector_classification>,
+  "data": <all match data here>
+}
+```
+3. Await the function call for up to 10 seconds for the data to be returned
+
 ## How to contribute:
 This project is a bit of a throwaway project, so I won't be taking any contributions for this project. If you have any questions though, feel free to ask!
 
