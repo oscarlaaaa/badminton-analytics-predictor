@@ -9,6 +9,7 @@ def build_dataframe(player_id, player_data, opponent_id):
     df2 = pd.DataFrame({'winnerId': player_id, 'duration': None, 'winnerPoints': None, 'setCount': None, 'loserId': opponent_id, 'tournamentId': None, 'startDate': None, 'loserPoints': None}, index=[0])
     df = pd.concat([df, df2], ignore_index=True, axis=0)
 
+    # fill up missing data with 0s
     df.fillna(0, inplace=True)
     
     # build up total matches/points won/lost from previous rows

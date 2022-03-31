@@ -6,5 +6,11 @@ def format_response(model_results, player_id, opponent_id, model_type):
             "headers": {
                 "Content-Type": "application/json"
             },
-            "body": str(model_results)
+            "body": str(
+                { 
+                    "player": player_id, 
+                    "opponent": opponent_id, 
+                    "type": model_type, 
+                    "results": model_results
+                })
             }

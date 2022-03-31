@@ -1,11 +1,11 @@
+# library imports
+import logging
+import json
+
+# module imports
 from helpers import model_builders
 from helpers import model_trainers
 from helpers import util_functions
-
-import logging
-import json
-# import requests
-# from tabulate import tabulate
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -45,10 +45,9 @@ def lambda_handler(event, context):
     :return: The result of the specified action.
     """
     logger.info('Event: %s', event)
+
     body = event['body']
-    logger.info(f"Body type: {type(body)}")
     body = json.loads(body)
-    logger.info(f"Body type after: {type(body)}")
     response = None
 
     try:
