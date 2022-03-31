@@ -1,7 +1,7 @@
 # Badminton Analytics Predictor
-A predictive machine-learning lambda that provides the probability of one player's victory over another. Provides functionality for the [Badminton Analytics Dashboard](https://github.com/oscarlaaaa/badminton-analytics/)'s head-to-head prediction feature (WIP).
+A predictive machine-learning lambda that provides the probability of one player's victory over another. Provides functionality for the [Badminton Analytics Dashboard](https://github.com/oscarlaaaa/badminton-analytics/)'s head-to-head prediction feature.
 
-## Current Features:
+## Current features:
 - Predicted % chance of victory between two players
 - Fully implemented Logistic Regression and Support Vector Classification (linear) models with 6 extracted features
 - Optimized database table to avoid costly joins when building dataframe
@@ -16,6 +16,50 @@ I've always wanted a way to use the data I've shamelessly scraped from tournamen
 - AWS Lambda and API Gateway
 - Scikit-Learn (Numpy, Pandas)
 - Docker
+
+## How it works:
+### __Building the model__:
+The lambda utilizes Numpy and Pandas to transform the input data into a usable dataframe. We extract the following features to be used in our prediction:
+
+1. Ratio of total points won/lost
+2. Ratio of total matches won/lost
+3. Ratio of recent (last 5) points won/lost
+4. Ratio of recent (last 5) matches won/lost
+5. Head-to-head ratio of points won/lost against a specific player
+6. Head-to-head ratio of matches won/lost against a specific player
+
+All of these extracted features are produced through cumulative sum/count, meaning that the only the previous matches (barring the current one) will impact the prediction outcome and minimizing bias present.
+
+The models I have decided upon to predict the match outcome are the classification models of Logistic Regression, and Support Vector Classification (linear). Determining the outcome of a match is binary in nature (win or loss), and so a classficiation model would be the best option for this purpose. I chose two different models just to play around with Scikit-Learn and have fun with my first ML project B)
+
+### __Training__:
+Models are trained using the entire dataset prior to prediction. Accuracy is determined using a K-Folds cross-validator with up to 10 split groups performed by calling ```result.mean()```, and standard deviation is derived from calling ```result.std()```, where ```result``` is the outcome of the cross-validation.
+
+### __Prediction__:
+Predictions are derived by inserting a row without data with the desired player and opponent pair - the extracted features are generated from the previous rows, so it doesn't require the same data filled out. The models then invoke the methods ```model.predict()``` and ```model.predict_proba()``` to extract the prediction and probability results respectively.
+
+### __Output__:
+If everything goes well, then you should receive an output with this format:
+
+```JSON
+{
+    "statusCode": 200,
+    "headers": {"Content-Type": "application/json"},
+    "body": { 
+        "player": player_id, 
+        "opponent": opponent_id, 
+        "type": model_type, 
+        "results": {
+            "acc": acc, 
+            "std": std, 
+            "pred": prediction, 
+            "prob": probability
+        }
+    }
+}
+```
+>Note: The body will be returned in string format, so you will need to parse the body before using it.
+
 
 ## How to use:
 This project requires the following technologies:
@@ -44,6 +88,8 @@ To query the Lambda function:
 }
 ```
 3. Await the function call for up to 10 seconds for the data to be returned
+
+>Please note that you will have to expose the Lambda endpoint on AWS API Gateway in order to access it. Information on how to set it up can be found at: https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
 
 ## How to contribute:
 This project is a bit of a throwaway project, so I won't be taking any contributions for this project. If you have any questions though, feel free to ask!
